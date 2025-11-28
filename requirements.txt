@@ -1,0 +1,14 @@
+# Project Dependencies for Cryptographic Hash Functions
+#
+# This file specifies the exact Python packages required to run the SHA-256 implementations.
+# 
+# Why this file is needed:
+# - Ensures consistent environment across different machines
+# - Allows automatic installation of required dependencies
+# - Provides version control for numerical computations
+# - Essential for reproducible research and assessment grading
+#
+# numpy>=1.21.0: Required for 32-bit integer operations and precise mathematical calculations
+# in SHA-256 algorithm implementations across all assessment problems.
+
+numpy>=1.21.0
