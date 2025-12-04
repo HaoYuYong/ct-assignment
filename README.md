@@ -47,6 +47,8 @@ Implementation of SHA-256 logical functions as defined in the Secure Hash Standa
 - `sigma0(x)` - Lowercase sigma0 with two rotations and one shift
 - `sigma1(x)` - Lowercase sigma1 with two rotations and one shift
 
+
+
 ## Problem 2: SHA-256 Constants Calculation
 Implementation of SHA-256 constant generation as defined in **FIPS PUB 180-4 Section 4.2.2**.
 
@@ -79,3 +81,38 @@ Implementation of SHA-256 constant generation as defined in **FIPS PUB 180-4 Sec
 
 - `format_constants(constants, items_per_line=8)`  
   Displays constants in standard formatting.
+
+
+
+## Problem 3: SHA-256 Messages Padding and Block Parsing
+
+Implemententation of SHA-256 message preprocessing according to FIPS PUB 180-4, Section 5.1.1 and 5.2.1
+
+### **Padding Algorithm**
+The SHA-256 standard requires messages to be padded to a multiple of 512 bits:
+
+For message of length ℓ bits:
+1. Append bit "1" to the message
+2. Append k zero bits where: ℓ + 1 + k ≡ 448 (mod 512)
+3. Append 64-bit block containing ℓ (original message length in bits)
+4. Total padded message length: ℓ + 1 + k + 64 ≡ 0 (mod 512)
+
+### **Implementation Details**
+- Generator Function: block_parse(msg: bytes) -> Generator[bytes, None, None]
+- Input: bytes object containing the message
+- Output: Yields successive 512-bit (64-byte) blocks
+- Padding Implementation: '1' bit implemented as 0x80 byte (10000000 binary)
+
+### **Key Features**
+- Generator Pattern: Yields blocks one at a time for memory efficiency
+- Mathematical Correctness: Implements exact SHA-256 padding formula
+- Comprehensive Testing: Tests edge cases and boundary conditions
+- FIPS Compliance: "abc" example matches FIPS PUB 180-4 exactly
+
+### **Testing Strategy**
+The implementation is tested with 5 different message lengths:
+1. Empty message (0 bytes) - Edge case testing
+2. "abc" (3 bytes) - Verifies against FIPS 180-4 standard example
+3. Exactly 55 bytes - Tests boundary where message fits in one block
+4. Exactly 56 bytes - Tests case requiring two blocks
+5. 100-byte message - Tests longer messages with multiple blocks
