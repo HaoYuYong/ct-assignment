@@ -27,9 +27,10 @@ ct-assignment/
    - pip install -r requirements.txt
 
 ## Current Progress
-- ✅ Problem 1: Complete
-- ✅ Problem 2: Complete
-- 🔄 Problems 3-5: In progress
+- ✅ Problem 1: Complete - SHA-256 logical functions
+- ✅ Problem 2: Complete - SHA-256 constants with numpy implementation
+- ✅ Problem 3: Complete - Message padding with Problem 4 integration
+- 🔄 Problem 4: In progress - SHA-256 hash computation
 
 
 
@@ -50,38 +51,49 @@ Implementation of SHA-256 logical functions as defined in the Secure Hash Standa
 
 
 ## Problem 2: SHA-256 Constants Calculation
-Implementation of SHA-256 constant generation as defined in **FIPS PUB 180-4 Section 4.2.2**.
+Implementation of SHA-256 constant generation as defined in **FIPS PUB 180-4 Section 4.2.2** using numpy for precision.
 
 ### **Prime Number Generation**
-- **Algorithm:** Sieve of Eratosthenes with optimized upper-bound estimation  
-- **Function:** `primes(n)` – generates the first *n* prime numbers  
+- **Algorithm:** Sieve of Eratosthenes with numpy optimization 
+- **Function:** `primes(n)` – generates the first *n* prime numbers
 - **Features:**  
-  - Input validation  
-  - Edge-case handling  
-  - Efficient complexity **O(n log log n)**  
+  - Uses numpy boolean arrays for efficient memory usage  
+  - Mathematical upper bound estimation for nth prime  
+  - Input validation and edge-case handling 
 
 
 ### **Constants Calculation Process**
 **Method:** First 32 bits of fractional parts of cube roots of the first 64 primes.
 
 **Steps:**
-1. Generate first **64 prime numbers**
-2. Compute **cube root** of each prime
-3. Extract **fractional part**, multiply by **2³²**
-4. Take **integer part** → yields first 32 bits
-5. Convert result to **hexadecimal**
+1. Generate first 64 prime numbers using optimized sieve
+2. Compute cube root of each prime using np.power() with float64 precision
+3. Extract fractional part using np.modf() for accuracy
+4. Multiply fractional part by 2³² and take floor
+5. Store as numpy uint32 array for Problem 4 integration
 
 
 ### **Key Functions**
 - `get_fractional_bits_corrected(number, num_bits=32)`  
-  Extracts precise fractional bits.
+  Extracts fractional bits with numpy precision.
 
-- `calculate_sha256_constants_corrected()`  
-  Computes all 64 SHA-256 constants.
+- `compute_sha256_constants()`  
+  Computes all 64 SHA-256 constants, returns hex strings and numpy array.
+  
+- `K256` - Numpy array containing all 64 constants as `uint32`
 
-- `format_constants(constants, items_per_line=8)`  
-  Displays constants in standard formatting.
+### **Verification**
+- 100% match with FIPS PUB 180-4 published constants
+- Comprehensive verification with checkmarks for each constant
+- Numpy array validation ensuring correct shape and type
+- Statistical analysis of constant values
 
+### **Constants Array for SHA-256 Compression**
+- `K256` array stored as `numpy.uint32` for use in Problem 4's hash computation
+- Shape: `(64,)` - 1D array for direct indexing in compression rounds
+- Memory efficient: 256 bytes total storage
+- Verified against SHA-256 standard
+- Directly usable in compression formula: `T1 = h + Σ1(e) + Ch(e,f,g) + K256[t] + W[t]`
 
 
 ## Problem 3: SHA-256 Messages Padding and Block Parsing
@@ -101,13 +113,21 @@ For message of length ℓ bits:
 - Generator Function: block_parse(msg: bytes) -> Generator[bytes, None, None]
 - Input: bytes object containing the message
 - Output: Yields successive 512-bit (64-byte) blocks
-- Padding Implementation: '1' bit implemented as 0x80 byte (10000000 binary)
+- Memory Efficient: Generator yields blocks one at a time
 
 ### **Key Features**
 - Generator Pattern: Yields blocks one at a time for memory efficiency
 - Mathematical Correctness: Implements exact SHA-256 padding formula
 - Comprehensive Testing: Tests edge cases and boundary conditions
 - FIPS Compliance: "abc" example matches FIPS PUB 180-4 exactly
+- Problem 4 Ready: Includes `block_to_words()` helper for seamless integration
+
+### **Helper Function for Problem 4 Integration**
+
+`def block_to_words(block: bytes) -> List[int]`
+
+
+Converts 512-bit block (64 bytes) to 16 32-bit words in big-endian format, preparing Problem 3 output for Problem 4's hash computation.
 
 ### **Testing Strategy**
 The implementation is tested with 5 different message lengths:
