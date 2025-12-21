@@ -276,3 +276,27 @@ print(f"Next hash: {bytes_to_hash_hex(next_hash)}")
 #     current_hash = hash(current_hash, block)
 # final_hash = bytes_to_hash_hex(current_hash)
 ```
+
+## Problem 5: Password Recovery and Security Analysis
+
+### Overview
+Recover three common passwords from SHA-256 hashes and analyze security vulnerabilities.
+
+### Quick Results
+- **Passwords Found**: `password`, `cheese`, `P@ssw0rd`
+- **Method**: Dictionary attack using RockYou breach data
+- **Performance**: All found in <1 second (1.3M hashes/second)
+- **Security Issue**: Plain SHA-256 lacks salting and key stretching
+
+### Setup Requirements
+1. Place `rockyou-75.txt` in project root directory
+2. Run all cells in `problems.ipynb` Problem 5 section
+3. See notebook for detailed methodology and security recommendations
+
+### Key Findings
+1. Demonstrates vulnerability of SHA-256 for password storage
+2. Shows importance of salting and key stretching
+3. Provides secure password hashing examples using PBKDF2
+
+### Files Used
+- `rockyou-75.txt` - Common password wordlist from RockYou breach
