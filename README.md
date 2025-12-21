@@ -31,7 +31,7 @@ ct-assignment/
 - ✅ Problem 2: Complete - SHA-256 constants with numpy implementation
 - ✅ Problem 3: Complete - Message padding with Problem 4 integration
 - ✅ Problem 4: Complete - SHA-256 hash computation
-
+- ✅ Problem 5: Complete - Password analysis and security recommendations
 
 
 # Assessment Problems
@@ -39,14 +39,48 @@ ct-assignment/
 ## Problem 1: Binary Words and Operations
 Implementation of SHA-256 logical functions as defined in the Secure Hash Standard (FIPS PUB 180-4).
 
-### **Implemented Functions:**
-- `Parity(x, y, z)` - Parity function (x XOR y XOR z)
-- `Ch(x, y, z)` - Choose function (uses y if x is 1, z if x is 0)
-- `Maj(x, y, z)` - Majority function (returns majority at each bit position)
-- `Sigma0(x)` - Uppercase Sigma0 with three rotations
-- `Sigma1(x)` - Uppercase Sigma1 with three rotations  
-- `sigma0(x)` - Lowercase sigma0 with two rotations and one shift
-- `sigma1(x)` - Lowercase sigma1 with two rotations and one shift
+## Overview
+Implementation of seven core SHA-256 logical functions as defined in FIPS PUB 180-4 Section 4.1.2. These bitwise functions provide the cryptographic primitives for diffusion and confusion in the SHA-256 compression algorithm, operating exclusively on 32-bit words using numpy for precise bit-level operations.
+
+## Technical Implementation
+- 32-bit Precision: All functions use numpy.uint32 to enforce strict 32-bit arithmetic, ensuring correct overflow behavior as specified in the SHA-256 standard
+- Bitwise Operations: Implementation leverages Python's native bitwise operators with numpy type constraints
+- Mathematical Correctness: Each function follows the exact mathematical definitions from the Secure Hash Standard
+
+## Cryptographic Functions Implemented
+### Basic Logical Functions
+- Parity(x, y, z): XOR-based parity function returning 1 when an odd number of inputs are 1
+- Ch(x, y, z): Choose function selecting between y and z based on bits of x (bitwise conditional)
+- Maj(x, y, z): Majority function returning the majority value at each bit position
+
+### Sigma Functions (Bit Diffusion)
+- Sigma0(x), Sigma1(x): Uppercase sigma functions using three rotations each for internal state transformation
+- sigma0(x), sigma1(x): Lowercase sigma functions using rotations and shifts for message schedule expansion
+
+## Implementation Details
+- 32-bit Safety: Explicit casting ensures all intermediate results respect 32-bit boundaries
+- Rotation Implementation: Uses bitwise shifts with overflow prevention for circular rotation
+- Type Consistency: All inputs are converted to np.uint32 for consistent behavior
+
+## Verification Methodology
+- Test Values: Representative 32-bit hexadecimal inputs
+- Output Validation: Results verified against manual calculations and SHA-256 specification examples
+- Bit-Level Testing: Edge cases including all-zeros and all-ones patterns
+
+Function Interdependence: Verified that functions work correctly when combined
+
+## Cryptographic Significance
+### These functions demonstrate:
+1. Diffusion: The sigma functions spread input bits across multiple positions
+2. Confusion: The Ch and Maj functions create complex relationships between input and output
+3. Non-linearity: Essential property for resistance against cryptanalysis
+4. Efficiency: Bitwise operations provide cryptographic strength with computational efficiency
+
+### Integration with Subsequent Problems
+- Functions from Problem 1 are directly used in Problem 4's hash computation
+- Sigma functions (sigma0, sigma1) are used in message schedule expansion
+- Logical functions (Ch, Maj) are used in compression rounds
+- Demonstrates modular design approach to cryptographic implementation
 
 
 
